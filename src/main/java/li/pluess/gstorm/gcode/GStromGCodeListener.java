@@ -1,8 +1,8 @@
-package li.pluess.gcode;
+package li.pluess.gstorm.gcode;
 
-import li.pluess.ev3.G00;
-import li.pluess.ev3.G21;
-import li.pluess.ev3.M3;
+import li.pluess.gstorm.ev3.G00;
+import li.pluess.gstorm.ev3.G21;
+import li.pluess.gstorm.ev3.M3;
 import li.pluess.gstrom.antlr.GCodeBaseListener;
 import li.pluess.gstrom.antlr.GCodeParser;
 import org.slf4j.Logger;

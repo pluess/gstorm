@@ -1,4 +1,4 @@
-package li.pluess.gcode;
+package li.pluess.gstorm;
 
 import com.github.rvesse.airline.SingleCommand;
 import org.springframework.boot.SpringApplication;

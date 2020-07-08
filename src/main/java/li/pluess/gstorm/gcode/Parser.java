@@ -1,7 +1,5 @@
-package li.pluess.gcode;
+package li.pluess.gstorm.gcode;
 
-import com.github.rvesse.airline.annotations.Command;
-import com.github.rvesse.airline.annotations.Option;
 import li.pluess.gstrom.antlr.GCodeLexer;
 import li.pluess.gstrom.antlr.GCodeParser;
 import org.antlr.v4.runtime.CharStream;
@@ -11,28 +9,22 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Command(name = "getting-started", description = "We're just getting started")
-public class CliExecuter implements CommandLineRunner {
+@Component
+public class Parser {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CliExecuter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Parser.class);
 
-    @Option(name = {"-f", "--file"}, description = "The GCode file to parse.")
-    private String fileName;
+    private final GStromGCodeListener gStromGCodeListener;
 
-    /**
-     * Don't use construcgtor injection here, since
-     * Ariline requires a non argument constructor.
-     */
-    @Autowired
-    private GStromGCodeListener gStromGCodeListener;
+    public Parser(GStromGCodeListener gStromGCodeListener) {
+        this.gStromGCodeListener = gStromGCodeListener;
+    }
 
-    @Override
-    public void run(String... ingnoredArguments) throws Exception {
+    public void parseFile(String fileName) throws IOException {
         LOGGER.info("Parsing file {}", fileName);
         GCodeParser gCodeParser = createParser(fileName);
         ParseTree tree = gCodeParser.gcode();

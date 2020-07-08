@@ -1,4 +1,4 @@
-package li.pluess.ev3;
+package li.pluess.gstorm.ev3;
 
 import org.springframework.stereotype.Component;
 
