@@ -57,9 +57,48 @@ public class GStromGCodeListenerUnitTest {
         verify(g00).execute(xd, yd, zd);
     }
 
+    public static Stream<Arguments> enterG01() {
+        return Stream.of(
+                createG01Arguments("5.00", "6.00", "7.00"),
+                createG01Arguments(null, "6.00", "7.00"),
+                createG01Arguments("5.00", null, "7.00"),
+                createG01Arguments("5.00", "6.00", null),
+                createG01Arguments(null, null, null)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    public void enterG01(Double xd, Double yd, Double zd, GCodeParser.G01Context ctx) {
+        gStromGCodeListener.enterG01(ctx);
+        verify(g00).execute(xd, yd, zd);
+    }
+
     private static Arguments createG00Arguments(String xs, String ys, String zs) {
         GCodeParser.G00Context g00Context = mock(GCodeParser.G00Context.class);
+        GCodeParser.CoordinatesContext coordinatesContext = createCoordinatesContext(xs, ys, zs);
+        when(g00Context.coordinates()).thenReturn(coordinatesContext);
+        return Arguments.of(
+                xs != null ? Double.parseDouble(xs) : null,
+                ys != null ? Double.parseDouble(ys) : null,
+                zs != null ? Double.parseDouble(zs) : null,
+                g00Context);
+    }
+
+    private static Arguments createG01Arguments(String xs, String ys, String zs) {
+        GCodeParser.G01Context g01Context = mock(GCodeParser.G01Context.class);
+        GCodeParser.CoordinatesContext coordinatesContext = createCoordinatesContext(xs, ys, zs);
+        when(g01Context.coordinates()).thenReturn(coordinatesContext);
+        return Arguments.of(
+                xs != null ? Double.parseDouble(xs) : null,
+                ys != null ? Double.parseDouble(ys) : null,
+                zs != null ? Double.parseDouble(zs) : null,
+                g01Context);
+    }
+
+    private static GCodeParser.CoordinatesContext createCoordinatesContext(String xs, String ys, String zs) {
         GCodeParser.CoordinatesContext coordinatesContext = mock(GCodeParser.CoordinatesContext.class);
+
         GCodeParser.XContext xContext = mock(GCodeParser.XContext.class);
         GCodeParser.YContext yContext = mock(GCodeParser.YContext.class);
         GCodeParser.ZContext zContext = mock(GCodeParser.ZContext.class);
@@ -67,7 +106,6 @@ public class GStromGCodeListenerUnitTest {
         TerminalNode yFloat = mock(TerminalNode.class);
         TerminalNode zFloat = mock(TerminalNode.class);
 
-        when(g00Context.coordinates()).thenReturn(coordinatesContext);
         if (xs != null) {
             when(coordinatesContext.x()).thenReturn(xContext);
             when(xContext.FLOAT()).thenReturn(xFloat);
@@ -83,11 +121,7 @@ public class GStromGCodeListenerUnitTest {
             when(zContext.FLOAT()).thenReturn(zFloat);
             when(zFloat.getText()).thenReturn(zs);
         }
-        return Arguments.of(
-                xs != null ? Double.parseDouble(xs) : null,
-                ys != null ? Double.parseDouble(ys) : null,
-                zs != null ? Double.parseDouble(zs) : null,
-                g00Context);
+        return coordinatesContext;
     }
 
 }

@@ -37,6 +37,19 @@ public class GStromGCodeListener extends GCodeBaseListener {
         g00.execute(x, y, z);
     }
 
+    /**
+     * Speed is ignored, which means G01 is the same as G00.
+     *
+     * @param ctx
+     */
+    @Override
+    public void enterG01(GCodeParser.G01Context ctx) {
+        Double x = ctx.coordinates().x() != null ? Double.parseDouble(ctx.coordinates().x().FLOAT().getText()) : null;
+        Double y = ctx.coordinates().y() != null ? Double.parseDouble(ctx.coordinates().y().FLOAT().getText()) : null;
+        Double z = ctx.coordinates().z() != null ? Double.parseDouble(ctx.coordinates().z().FLOAT().getText()) : null;
+        g00.execute(x, y, z);
+    }
+
     @Override
     public void enterG21(GCodeParser.G21Context ctx) {
         g21.execute();
