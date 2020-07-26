@@ -1,5 +1,6 @@
 package li.pluess.gstorm.gcode;
 
+import li.pluess.gstorm.ev3.Ev3Client;
 import li.pluess.gstorm.ev3.G00;
 import li.pluess.gstorm.ev3.G21;
 import li.pluess.gstorm.ev3.M3;
@@ -7,6 +8,7 @@ import li.pluess.gstrom.antlr.GCodeBaseListener;
 import li.pluess.gstrom.antlr.GCodeParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,14 +16,25 @@ public class GStromGCodeListener extends GCodeBaseListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GStromGCodeListener.class);
 
+    @Autowired
+    private final Ev3Client ev3Client;
+
     private final M3 m3;
     private final G21 g21;
     private final G00 g00;
 
-    public GStromGCodeListener(M3 m3, G21 g21, G00 g00) {
+    public GStromGCodeListener(Ev3Client ev3Client, M3 m3, G21 g21, G00 g00) {
+        this.ev3Client = ev3Client;
         this.m3 = m3;
         this.g21 = g21;
         this.g00 = g00;
+        this.init();
+    }
+
+    private void init() {
+        ev3Client.reset("a");
+        ev3Client.reset("b");
+        ev3Client.reset("c");
     }
 
     @Override
@@ -54,4 +67,5 @@ public class GStromGCodeListener extends GCodeBaseListener {
     public void enterG21(GCodeParser.G21Context ctx) {
         g21.execute();
     }
+
 }

@@ -1,5 +1,6 @@
 package li.pluess.gstorm.gcode;
 
+import li.pluess.gstorm.ev3.Ev3Client;
 import li.pluess.gstorm.ev3.G00;
 import li.pluess.gstorm.ev3.G21;
 import li.pluess.gstorm.ev3.M3;
@@ -31,6 +32,9 @@ public class GStromGCodeListenerUnitTest {
 
     @Mock
     private G00 g00;
+
+    @Mock
+    private Ev3Client ev3Client;
 
     @InjectMocks
     private GStromGCodeListener gStromGCodeListener;

@@ -5,8 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
-import java.util.Arrays;
-
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -17,19 +15,13 @@ import static org.mockito.Mockito.verify;
 public class G00UnitTest {
 
     @Spy
-    private Ev3Controller ev3Controller;
+    private Ev3Client ev3Client;
 
     @InjectMocks
     private G00 g00;
 
     @Captor
-    ArgumentCaptor<Double> xCaptor;
-
-    @Captor
-    ArgumentCaptor<Double> yCaptor;
-
-    @Captor
-    ArgumentCaptor<Double> zCaptor;
+    ArgumentCaptor<Ev3Client.Coordinates> coordinatesArgumentCaptor;
 
     @BeforeEach
     public void setUp() {
@@ -42,22 +34,21 @@ public class G00UnitTest {
         g00.execute(5.0, 6.0, 7.0);
         g00.execute(null, null, null);
 
-        verify(ev3Controller, times(3)).goTo(
-                xCaptor.capture(),
-                yCaptor.capture(),
-                zCaptor.capture());
+        verify(ev3Client, times(3)).moveLinear(
+                coordinatesArgumentCaptor.capture());
 
-        Assertions.assertEquals(
-                Arrays.asList(0.0, 5.0, 5.0),
-                xCaptor.getAllValues());
-
-        Assertions.assertEquals(
-                Arrays.asList(0.0, 6.0, 6.0),
-                yCaptor.getAllValues());
-
-        Assertions.assertEquals(
-                Arrays.asList(0.0, 7.0, 7.0),
-                zCaptor.getAllValues());
+        int i = 1;
+        for (Ev3Client.Coordinates coordinates : coordinatesArgumentCaptor.getAllValues()) {
+            switch (i++) {
+                case 1:
+                    Assertions.assertEquals(new Ev3Client.Coordinates(0.0, 0.0, 0.0), coordinates);
+                    break;
+                case 2:
+                case 3:
+                    Assertions.assertEquals(new Ev3Client.Coordinates(5.0, 6.0, 7.0), coordinates);
+                    break;
+            }
+        }
 
     }
 

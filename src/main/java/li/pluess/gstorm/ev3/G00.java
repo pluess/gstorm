@@ -15,15 +15,15 @@ public class G00 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(G00.class);
 
-    private final Ev3Controller ev3Controller;
+    private final Ev3Client ev3Client;
 
     private double x = 0.0;
     private double y = 0.0;
     private double z = 0.0;
 
     @Autowired
-    public G00(Ev3Controller ev3Controller) {
-        this.ev3Controller = ev3Controller;
+    public G00(Ev3Client ev3Client) {
+        this.ev3Client = ev3Client;
     }
 
     /**
@@ -39,8 +39,8 @@ public class G00 {
         y = ly != null ? ly : y;
         z = lz != null ? lz : z;
 
-        LOGGER.debug("Given x={}, y={}, z={} Using x={}, y={}, z={}", lx, ly, lz, x, y, z);
-        ev3Controller.goTo(x, y, z);
+        LOGGER.debug("Given x={}, y={}, z={}, Using x={}, y={}, z={}", lx, ly, lz, x, y, z);
+        ev3Client.moveLinear(new Ev3Client.Coordinates(x, y, z));
     }
 
 }
