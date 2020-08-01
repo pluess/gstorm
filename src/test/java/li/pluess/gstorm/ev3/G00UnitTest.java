@@ -3,7 +3,10 @@ package li.pluess.gstorm.ev3;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -14,18 +17,18 @@ import static org.mockito.Mockito.verify;
  */
 public class G00UnitTest {
 
-    @Spy
+    @Mock
     private Ev3Client ev3Client;
 
-    @InjectMocks
-    private G00 g00;
-
     @Captor
-    ArgumentCaptor<Ev3Client.Coordinates> coordinatesArgumentCaptor;
+    private ArgumentCaptor<Ev3Client.Coordinates> coordinatesArgumentCaptor;
+
+    private G00 g00;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        g00 = new G00(ev3Client, new CurrentPosition());
     }
 
     @Test

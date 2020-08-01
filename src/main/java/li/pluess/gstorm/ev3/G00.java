@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Move to the specified coordinates.
- * This {@link Component} is statefull. If <codd>null</codd> is given for a coordinate
- * it uses the value from the last call to {@link #execute(Double, Double, Double)}.
+ * This {@link Component} is statefull. If <code>null</code> is given for a coordinate
+ * it uses the value from the {@link CurrentPosition}.
  */
 @Component
 public class G00 {
@@ -16,14 +16,12 @@ public class G00 {
     private static final Logger LOGGER = LoggerFactory.getLogger(G00.class);
 
     private final Ev3Client ev3Client;
-
-    private double x = 0.0;
-    private double y = 0.0;
-    private double z = 0.0;
+    private final CurrentPosition currentPosition;
 
     @Autowired
-    public G00(Ev3Client ev3Client) {
+    public G00(Ev3Client ev3Client, CurrentPosition currentPosition) {
         this.ev3Client = ev3Client;
+        this.currentPosition = currentPosition;
     }
 
     /**
@@ -31,16 +29,22 @@ public class G00 {
      * last method call is used.
      */
     public void execute(
-            Double lx,
-            Double ly,
-            Double lz) {
+            Double x,
+            Double y,
+            Double z) {
 
-        x = lx != null ? lx : x;
-        y = ly != null ? ly : y;
-        z = lz != null ? lz : z;
+        currentPosition.setXIfNotNull(x);
+        currentPosition.setYIfNotNull(y);
+        currentPosition.setZIfNotNull(z);
 
-        LOGGER.debug("Given x={}, y={}, z={}, Using x={}, y={}, z={}", lx, ly, lz, x, y, z);
-        ev3Client.moveLinear(new Ev3Client.Coordinates(x, y, z));
+        LOGGER.debug("Given x={}, y={}, z={}, Using x={}, y={}, z={}",
+                x, y, z,
+                currentPosition.getX(), currentPosition.getY(), currentPosition.getZ());
+        ev3Client.moveLinear(
+                new Ev3Client.Coordinates(
+                        currentPosition.getX(),
+                        currentPosition.getY(),
+                        currentPosition.getZ()));
     }
 
 }

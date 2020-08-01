@@ -1,9 +1,6 @@
 package li.pluess.gstorm.gcode;
 
-import li.pluess.gstorm.ev3.Ev3Client;
-import li.pluess.gstorm.ev3.G00;
-import li.pluess.gstorm.ev3.G21;
-import li.pluess.gstorm.ev3.M3;
+import li.pluess.gstorm.ev3.*;
 import li.pluess.gstrom.antlr.GCodeBaseListener;
 import li.pluess.gstrom.antlr.GCodeParser;
 import org.slf4j.Logger;
@@ -16,18 +13,19 @@ public class GStromGCodeListener extends GCodeBaseListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GStromGCodeListener.class);
 
-    @Autowired
     private final Ev3Client ev3Client;
-
     private final M3 m3;
     private final G21 g21;
     private final G00 g00;
+    private final G02 g02;
 
-    public GStromGCodeListener(Ev3Client ev3Client, M3 m3, G21 g21, G00 g00) {
+    @Autowired
+    public GStromGCodeListener(Ev3Client ev3Client, M3 m3, G21 g21, G00 g00, G02 g02) {
         this.ev3Client = ev3Client;
         this.m3 = m3;
         this.g21 = g21;
         this.g00 = g00;
+        this.g02 = g02;
         this.init();
     }
 
@@ -61,6 +59,16 @@ public class GStromGCodeListener extends GCodeBaseListener {
         Double y = ctx.coordinates().y() != null ? Double.parseDouble(ctx.coordinates().y().FLOAT().getText()) : null;
         Double z = ctx.coordinates().z() != null ? Double.parseDouble(ctx.coordinates().z().FLOAT().getText()) : null;
         g00.execute(x, y, z);
+    }
+
+    @Override
+    public void enterG02(GCodeParser.G02Context ctx) {
+        Double x = ctx.coordinates().x() != null ? Double.parseDouble(ctx.coordinates().x().FLOAT().getText()) : null;
+        Double y = ctx.coordinates().y() != null ? Double.parseDouble(ctx.coordinates().y().FLOAT().getText()) : null;
+        Double z = ctx.coordinates().z() != null ? Double.parseDouble(ctx.coordinates().z().FLOAT().getText()) : null;
+        Double i = ctx.arc().i() != null ? Double.parseDouble(ctx.arc().i().FLOAT().getText()) : null;
+        Double j = ctx.arc().j() != null ? Double.parseDouble(ctx.arc().j().FLOAT().getText()) : null;
+        g02.execute(x, y, z, i, j);
     }
 
     @Override

@@ -77,10 +77,89 @@ public interface Ev3Client {
         }
     }
 
+    static class ArcCoordinates {
+        private double x;
+        private double y;
+        private double z;
+        private double i;
+        private double j;
+
+        public ArcCoordinates(double x, double y, double z, double i, double j) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.i = i;
+            this.j = j;
+        }
+
+        public double getX() {
+            return x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public double getZ() {
+            return z;
+        }
+
+        public double getI() {
+            return i;
+        }
+
+        public double getJ() {
+            return j;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ArcCoordinates that = (ArcCoordinates) o;
+
+            return new EqualsBuilder()
+                    .append(x, that.x)
+                    .append(y, that.y)
+                    .append(z, that.z)
+                    .append(i, that.i)
+                    .append(j, that.j)
+                    .isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37)
+                    .append(x)
+                    .append(y)
+                    .append(z)
+                    .append(i)
+                    .append(j)
+                    .toHashCode();
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("x", x)
+                    .append("y", y)
+                    .append("z", z)
+                    .append("i", i)
+                    .append("j", j)
+                    .toString();
+        }
+    }
+
+
     @RequestMapping(method = RequestMethod.GET, value = "/motor/reset/{port}")
     void reset(@PathVariable("port") String port);
 
     @RequestMapping(method = RequestMethod.POST, value = "/move-linear", consumes = "application/json")
     void moveLinear(Coordinates coordinates);
+
+    @RequestMapping(method = RequestMethod.POST, value = "/move-arc", consumes = "application/json")
+    void moveArc(ArcCoordinates coordinates);
 
 }
